@@ -6,11 +6,11 @@ import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const Duration defaultTimeout = Duration(seconds: 60);
+  static const Duration defaultTimeout = Duration(seconds: 90);
   static const Duration aiTimeout = Duration(seconds: 120);
 
   static const String timeoutMessage =
-      'Connection timed out. If accessing for the first time, cloud server may take ~50s to wake up on Render free tier. Please try again.';
+      'Connection timed out. Cloud server took too long to respond. Please try again.';
 
   static String? _customBaseUrl;
 

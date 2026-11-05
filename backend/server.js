@@ -6,6 +6,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
+const https = require("https");
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
@@ -14,6 +15,9 @@ const roadmapRoutes = require("./routes/roadmapRoutes");
 const interviewRoutes = require("./routes/interviewRoutes");
 
 const app = express();
+
+// Trust Render / Reverse Proxy headers (fixes express-rate-limit IP detection)
+app.set("trust proxy", 1);
 
 // Security Headers
 app.use(helmet());
@@ -146,6 +150,14 @@ const startServer = async () => {
     } else {
       console.log(`📧 Email Provider: Render Console Fallback (OTPs printed directly in server logs)`);
     }
+
+    // Render free-tier self keep-alive (pings health endpoint every 10 mins to prevent sleeping)
+    const renderUrl = process.env.RENDER_EXTERNAL_URL || "https://carrerpilot-t4my.onrender.com";
+    setInterval(() => {
+      https.get(`${renderUrl}/api/health`, (res) => {
+        // Keeps container active
+      }).on("error", () => {});
+    }, 10 * 60 * 1000);
   });
 
   await connectDB();
