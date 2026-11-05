@@ -11,6 +11,7 @@ const connectDB = async () => {
 
     const conn = await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 8000,
+      bufferCommands: false,
     });
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host} (${isAtlas ? "Atlas Cloud ☁️" : "Local Compass 💻"})`);

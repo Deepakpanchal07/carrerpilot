@@ -5,6 +5,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const mongoose = require("mongoose");
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
@@ -70,10 +71,28 @@ app.get("/", (req, res) => {
 
 // Health check route
 app.get("/api/health", (req, res) => {
+  const isDbConnected = mongoose.connection.readyState === 1;
   res.json({
     success: true,
     message: "CareerPilot AI Backend is running",
+    database: isDbConnected ? "connected" : "disconnected",
+    dbState: mongoose.connection.readyState,
+    env: process.env.NODE_ENV || "development",
+    timestamp: new Date().toISOString(),
   });
+});
+
+// Guard: verify database is available for data endpoints so requests don't hang if Atlas connection fails
+app.use("/api", (req, res, next) => {
+  if (req.path === "/health") return next();
+  const state = mongoose.connection.readyState;
+  if (state === 0 || state === 3) {
+    return res.status(503).json({
+      success: false,
+      message: "Database is not connected. Please ensure MONGO_URI is set in Render Environment and Atlas Network Access allows 0.0.0.0/0.",
+    });
+  }
+  next();
 });
 
 // API routes

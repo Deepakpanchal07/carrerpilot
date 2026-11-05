@@ -6,8 +6,11 @@ import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const Duration defaultTimeout = Duration(seconds: 30);
-  static const Duration aiTimeout = Duration(seconds: 90);
+  static const Duration defaultTimeout = Duration(seconds: 60);
+  static const Duration aiTimeout = Duration(seconds: 120);
+
+  static const String timeoutMessage =
+      'Connection timed out. If accessing for the first time, cloud server may take ~50s to wake up on Render free tier. Please try again.';
 
   static String? _customBaseUrl;
 
@@ -124,7 +127,7 @@ class ApiService {
 
       return _safeDecode(response);
     } on TimeoutException {
-      throw Exception('Connection timed out. Please check your network and try again.');
+      throw Exception(timeoutMessage);
     } catch (e) {
       throw Exception('Unable to connect to backend ($baseUrl). Please check if backend is running.');
     }
@@ -149,7 +152,7 @@ class ApiService {
 
       return _safeDecode(response);
     } on TimeoutException {
-      throw Exception('Connection timed out. Please check your network and try again.');
+      throw Exception(timeoutMessage);
     } catch (e) {
       throw Exception('Unable to connect to backend ($baseUrl). Please check if backend is running.');
     }
@@ -178,7 +181,7 @@ class ApiService {
 
       return _safeDecode(response);
     } on TimeoutException {
-      throw Exception('Connection timed out. Please check your network and try again.');
+      throw Exception(timeoutMessage);
     } catch (e) {
       throw Exception('Unable to connect to backend ($baseUrl). Please check if backend is running.');
     }
@@ -213,7 +216,7 @@ class ApiService {
 
       return _safeDecode(response);
     } on TimeoutException {
-      throw Exception('Connection timed out. Please check your network and try again.');
+      throw Exception(timeoutMessage);
     } catch (e) {
       throw Exception('Unable to connect to backend ($baseUrl). Please check if backend is running.');
     }
