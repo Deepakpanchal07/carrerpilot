@@ -57,6 +57,9 @@ class ApiService {
     }
 
     if (kIsWeb) {
+      if (kReleaseMode) {
+        return 'https://carrerpilot-t4my.onrender.com/api';
+      }
       return 'http://localhost:5000/api';
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       return 'http://10.0.2.2:5000/api';
